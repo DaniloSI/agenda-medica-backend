@@ -17,13 +17,13 @@ import { AuthGuard } from '@nestjs/passport';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('signup')
+  @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
   public async signUp(@Body() signUpDto: SignUpDto): Promise<User> {
     return this.usersService.signUp(signUpDto);
   }
 
-  @Post('signin')
+  @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   public async signIn(@Body() signInDto: SignInDto): Promise<{
     name: string;

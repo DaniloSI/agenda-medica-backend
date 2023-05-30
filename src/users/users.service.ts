@@ -6,23 +6,23 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { User } from './models/user.model';
 import { AuthService } from 'src/auth/auth.service';
-import { SignUpDto } from './dto/sign-up.dto';
+import { SignUpUserDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel('User')
+    @InjectModel(User.name)
     private readonly userModel: Model<User>,
     private readonly authService: AuthService,
   ) {}
 
-  public async signUp(signUpDto: SignUpDto): Promise<User> {
-    const user = new this.userModel(signUpDto);
+  public async signUp(signUpUserDto: SignUpUserDto): Promise<User> {
+    const user = new this.userModel(signUpUserDto);
 
-    if (await this.userModel.findOne({ email: signUpDto.email })) {
+    if (await this.userModel.findOne({ email: signUpUserDto.email })) {
       throw new UnauthorizedException('Usuário já cadastrado com este e-mail.');
     }
 
@@ -49,9 +49,12 @@ export class UsersService {
     return match;
   }
 
-  public async signIn(
-    signInDto: SignInDto,
-  ): Promise<{ name: string; jwtToken: string; email: string }> {
+  public async signIn(signInDto: SignInDto): Promise<{
+    givenName: string;
+    familyName: string;
+    jwtToken: string;
+    email: string;
+  }> {
     const user = await this.findByEmail(signInDto.email);
     const match = await this.checkPassword(user, signInDto.password);
 
@@ -62,7 +65,8 @@ export class UsersService {
     const jwtToken = await this.authService.createAccessToken(user._id);
 
     return {
-      name: user.name,
+      givenName: user.givenName,
+      familyName: user.familyName,
       jwtToken,
       email: user.email,
     };

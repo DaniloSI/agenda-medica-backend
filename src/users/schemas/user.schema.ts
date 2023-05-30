@@ -1,17 +1,40 @@
-import * as mongoose from 'mongoose';
-import * as bcrypt from 'bcrypt';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { hash } from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
-export const UserSchema = new mongoose.Schema({
-  name: {
+export enum UserType {
+  PATIENT,
+  PROFESSIONAL,
+}
+
+@Schema()
+export class User {
+  @Prop({
     type: String,
-  },
-  email: {
-    type: String,
-  },
-  password: {
-    type: String,
-  },
-});
+    default: () => uuidv4(),
+  })
+  _id: string;
+
+  @Prop({ type: String, required: true })
+  givenName: string;
+
+  @Prop({ type: String, required: true })
+  familyName: string;
+
+  @Prop({ type: String, required: true })
+  email: string;
+
+  @Prop({ type: String, required: true })
+  password: string;
+
+  @Prop({ type: String, required: true })
+  phone: string;
+
+  @Prop({ type: Boolean, required: true })
+  acceptTerms: boolean;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', async function (next: (err?: Error) => void) {
   try {
@@ -19,7 +42,7 @@ UserSchema.pre('save', async function (next: (err?: Error) => void) {
       return next();
     }
 
-    this['password'] = await bcrypt.hash(this['password'], 10);
+    this['password'] = await hash(this['password'], 10);
   } catch (error) {
     next(error);
   }

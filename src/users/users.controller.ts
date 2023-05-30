@@ -8,10 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { User } from './models/user.model';
+import { SignUpUserDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from './schemas/user.schema';
 
 @Controller('users')
 export class UsersController {
@@ -19,14 +19,17 @@ export class UsersController {
 
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
-  public async signUp(@Body() signUpDto: SignUpDto): Promise<User> {
-    return this.usersService.signUp(signUpDto);
+  public async signUpProfessional(
+    @Body() signUpUserDto: SignUpUserDto,
+  ): Promise<User> {
+    return this.usersService.signUp(signUpUserDto);
   }
 
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   public async signIn(@Body() signInDto: SignInDto): Promise<{
-    name: string;
+    givenName: string;
+    familyName: string;
     email: string;
     jwtToken: string;
   }> {

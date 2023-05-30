@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { AuthModule } from 'src/auth/auth.module';
+import { Patient, PatientSchema } from './schemas/patient.schema';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from 'src/auth/auth.module';
       {
         name: User.name,
         schema: UserSchema,
+        discriminators: [{ name: Patient.name, schema: PatientSchema }],
       },
     ]),
     AuthModule,

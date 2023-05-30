@@ -1,12 +1,15 @@
 import {
   IsBoolean,
+  IsDateString,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsString,
   MinLength,
 } from 'class-validator';
+import { Gender } from '../schemas/patient.schema';
 
-export class SignUpUserDto {
+export class SignUpPatientDto {
   @IsNotEmpty()
   @IsString()
   givenName: string;
@@ -32,4 +35,10 @@ export class SignUpUserDto {
   @IsNotEmpty()
   @IsBoolean()
   acceptTerms: boolean;
+
+  @IsDateString()
+  birthDate: string;
+
+  @IsEnum(Gender)
+  gender: Gender;
 }

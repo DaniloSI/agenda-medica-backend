@@ -7,29 +7,29 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
-import { SignUpUserDto } from './dto/sign-up.dto';
+import { SignUpPatientDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { User } from './schemas/user.schema';
+import { Patient } from './schemas/patient.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
+    @InjectModel(Patient.name)
+    private readonly userModel: Model<Patient>,
     private readonly authService: AuthService,
   ) {}
 
-  public async signUp(signUpUserDto: SignUpUserDto): Promise<User> {
-    const user = new this.userModel(signUpUserDto);
+  public async signUp(signUpPatientDto: SignUpPatientDto): Promise<Patient> {
+    const user = new this.userModel(signUpPatientDto);
 
-    if (await this.userModel.findOne({ email: signUpUserDto.email })) {
+    if (await this.userModel.findOne({ email: signUpPatientDto.email })) {
       throw new UnauthorizedException('Usuário já cadastrado com este e-mail.');
     }
 
     return user.save();
   }
 
-  private async findByEmail(email: string): Promise<User> {
+  private async findByEmail(email: string): Promise<Patient> {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
@@ -39,7 +39,10 @@ export class UsersService {
     return user;
   }
 
-  private async checkPassword(user: User, password: string): Promise<boolean> {
+  private async checkPassword(
+    user: Patient,
+    password: string,
+  ): Promise<boolean> {
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
@@ -72,7 +75,7 @@ export class UsersService {
     };
   }
 
-  public async findAll(): Promise<User[]> {
+  public async findAll(): Promise<Patient[]> {
     return this.userModel.find();
   }
 }

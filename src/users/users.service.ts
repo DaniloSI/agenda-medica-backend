@@ -1,35 +1,20 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
-import { SignUpPatientDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { Patient } from './schemas/patient.schema';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(Patient.name)
-    private readonly userModel: Model<Patient>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
     private readonly authService: AuthService,
   ) {}
 
-  public async signUp(signUpPatientDto: SignUpPatientDto): Promise<Patient> {
-    const user = new this.userModel(signUpPatientDto);
-
-    if (await this.userModel.findOne({ email: signUpPatientDto.email })) {
-      throw new UnauthorizedException('Usuário já cadastrado com este e-mail.');
-    }
-
-    return user.save();
-  }
-
-  private async findByEmail(email: string): Promise<Patient> {
+  private async findByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
@@ -39,10 +24,7 @@ export class UsersService {
     return user;
   }
 
-  private async checkPassword(
-    user: Patient,
-    password: string,
-  ): Promise<boolean> {
+  private async checkPassword(user: User, password: string): Promise<boolean> {
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
@@ -75,7 +57,7 @@ export class UsersService {
     };
   }
 
-  public async findAll(): Promise<Patient[]> {
+  public async findAll(): Promise<User[]> {
     return this.userModel.find();
   }
 }

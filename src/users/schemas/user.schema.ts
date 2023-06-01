@@ -1,12 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hash } from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
-import { Patient } from './patient.schema';
 
-export enum UserType {
-  PATIENT,
-  PROFESSIONAL,
-}
+import { v4 as uuidv4 } from 'uuid';
 
 @Schema({ discriminatorKey: 'type' })
 export class User {
@@ -33,13 +28,6 @@ export class User {
 
   @Prop({ type: Boolean, required: true })
   acceptTerms: boolean;
-
-  @Prop({
-    type: String,
-    required: true,
-    enum: [Patient.name],
-  })
-  type: UserType;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

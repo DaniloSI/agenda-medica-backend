@@ -1,9 +1,4 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
-
-export enum UserType {
-  PATIENT,
-  PROFESSIONAL,
-}
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export enum Gender {
   MALE = 'M',
@@ -11,6 +6,7 @@ export enum Gender {
   OTHER = 'O',
 }
 
+@Schema()
 export class Patient {
   _id: string;
   givenName: string;
@@ -19,7 +15,6 @@ export class Patient {
   password: string;
   phone: string;
   acceptTerms: boolean;
-  type: UserType;
 
   @Prop({ type: String, required: true })
   birthDate: Date;

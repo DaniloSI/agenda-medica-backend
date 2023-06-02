@@ -3,7 +3,7 @@ import { hash } from 'bcrypt';
 
 import { v4 as uuidv4 } from 'uuid';
 
-@Schema({ discriminatorKey: 'type' })
+@Schema({ discriminatorKey: 'type', versionKey: false })
 export class User {
   @Prop({
     type: String,

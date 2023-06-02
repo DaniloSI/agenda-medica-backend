@@ -2,7 +2,6 @@ import {
   ArrayMinSize,
   IsArray,
   IsDefined,
-  IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
   IsString,
@@ -11,20 +10,9 @@ import {
 import { ProfessionalRegister } from '../schemas/professional.schema';
 import { SignUpUserDto } from '../../dto/sign-up.dto';
 import { Type } from 'class-transformer';
-
-class ProfessionalRegisterDto {
-  @IsString()
-  @IsNotEmpty()
-  readonly regulator: string;
-
-  @IsString()
-  @IsNotEmpty()
-  readonly code: string;
-
-  @IsString()
-  @IsNotEmpty()
-  readonly uf: string;
-}
+import { Address } from 'cluster';
+import { ProfessionalRegisterDto } from './professional-register.dto';
+import { AddressDto } from './address.dto';
 
 export class SignUpProfessionalDto extends SignUpUserDto {
   @IsDefined()
@@ -38,4 +26,11 @@ export class SignUpProfessionalDto extends SignUpUserDto {
   @IsString({ each: true })
   @ArrayMinSize(1)
   readonly specialties: string[];
+
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  address: Address;
 }

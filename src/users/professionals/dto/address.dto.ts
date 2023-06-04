@@ -15,6 +15,10 @@ export class AddressDto {
 
   @IsString()
   @IsNotEmpty()
+  streetAddress: string;
+
+  @IsString()
+  @IsNotEmpty()
   number: string;
 
   @IsString()
